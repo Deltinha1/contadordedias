@@ -38,7 +38,7 @@
             max-height: 800px;
             display: flex;
             flex-direction: column;
-            z-index: 2;
+            z-index: 1; /* Reduzido para que os corações fiquem na frente */
         }
         
         .hearts-bg {
@@ -48,7 +48,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 0;
+            z-index: 3; /* Aumentado para ficar na frente de tudo */
         }
         
         .heart {
@@ -92,6 +92,19 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            object-position: center 30%; /* Ajustado para baixar a imagem - o valor padrão é 50% */
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        
+        /* Estilos para a animação de troca de foto */
+        .photo.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+        }
+        
+        .photo.fade-in {
+            opacity: 1;
+            transform: scale(1);
         }
         
         .time-blocks {
@@ -163,7 +176,7 @@
             font-size: 20px;
             color: #ff4081;
             pointer-events: none;
-            z-index: 1;
+            z-index: 5; /* Aumentado para ficar acima de tudo */
             animation: float-up 4s forwards;
             opacity: 0;
         }
@@ -191,11 +204,10 @@
         <p class="message">Cada segundo ao seu lado é um tesouro que guardo na alma.</p>
         
         <div class="photo-container" id="photo-container">
-            <!-- Aqui está a tag img vazia para você adicionar sua imagem -->
-            <img src="nos.jpg" alt="Nossa foto juntos" class="photo">
+            <!-- A foto será inserida dinamicamente pelo JavaScript -->
         </div>
         
-        <p class="start-date">Começamos a namorar em <strong>01 de Janeiro de 2024</strong></p>
+        <p class="start-date">Desde <strong>01 de Janeiro de 2024</strong></p>
         
         <div class="total-days" id="total-days">
             0 dias juntos
@@ -233,6 +245,50 @@
     <script>
         // Data fixa de início: 1 de janeiro de 2024
         const START_DATE = new Date('2024-01-01T00:00:00');
+        
+        // Array com as fotos para rotação
+        // Substitua com os nomes reais das suas fotos
+        const PHOTOS = [
+            'nos.jpg',
+            'nos2.jpg',
+            'nos3.jpg',
+            'nos4.jpg',
+            'nos5.jpg'
+        ];
+        
+        // Inicializa o índice da foto atual
+        let currentPhotoIndex = 0;
+        let photoElement = null;
+        
+        // Função para carregar a primeira foto
+        function loadInitialPhoto() {
+            const container = document.getElementById('photo-container');
+            photoElement = document.createElement('img');
+            photoElement.src = PHOTOS[0];
+            photoElement.alt = 'Nossa foto juntos';
+            photoElement.classList.add('photo', 'fade-in');
+            container.appendChild(photoElement);
+        }
+        
+        // Função para trocar a foto com animação
+        function changePhoto() {
+            // Primeiro aplicamos o efeito de fade out
+            photoElement.classList.add('fade-out');
+            photoElement.classList.remove('fade-in');
+            
+            // Depois de meio segundo (a duração da transição), trocamos a imagem
+            setTimeout(() => {
+                // Avançar para a próxima foto no array
+                currentPhotoIndex = (currentPhotoIndex + 1) % PHOTOS.length;
+                
+                // Trocar a imagem
+                photoElement.src = PHOTOS[currentPhotoIndex];
+                
+                // Aplicar efeito de fade in
+                photoElement.classList.remove('fade-out');
+                photoElement.classList.add('fade-in');
+            }, 500);
+        }
         
         // Criar corações flutuantes de fundo
         function createBackgroundHearts() {
@@ -361,6 +417,12 @@
         
         // Inicializar
         window.addEventListener('DOMContentLoaded', () => {
+            // Carregar a primeira foto
+            loadInitialPhoto();
+            
+            // Iniciar a rotação de fotos a cada 5 segundos
+            setInterval(changePhoto, 5000);
+            
             createBackgroundHearts();
             addFullScreenHeartEffect();
             updateCounter();
