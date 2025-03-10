@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evelyn e Hugo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 375px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            height: auto;
+            max-height: 800px;
+            display: flex;
+            flex-direction: column;
+            z-index: 2;
+        }
+        
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .heart {
+            position: absolute;
+            opacity: 0.3;
+            font-size: 30px;
+            color: #ff758c;
+        }
+        
+        h1 {
+            margin-bottom: 15px;
+            color: #ff758c;
+            font-size: 24px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #666;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .photo-container {
+            width: 100%;
+            margin: 15px auto;
+            position: relative;
+            z-index: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.3);
+            height: 260px; /* Ajustado para tela de celular */
+            cursor: pointer; /* Indicar que é clicável */
+        }
+        
+        .photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .time-blocks {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .time-block {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            border-radius: 12px;
+            padding: 10px;
+            min-width: 60px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.3);
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .time-value {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .time-label {
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        .total-days {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            border-radius: 50px;
+            padding: 12px 20px;
+            margin: 0 auto 15px;
+            display: inline-block;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .start-date {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #666;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .note {
+            font-style: italic;
+            color: #888;
+            margin-top: 15px;
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Estilo para os corações animados ao clicar */
+        .click-heart {
+            position: fixed;
+            font-size: 20px;
+            color: #ff4081;
+            pointer-events: none;
+            z-index: 1;
+            animation: float-up 4s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts-bg" id="hearts-bg"></div>
+    <div class="container">
+        <div class="hearts" id="hearts"></div>
+        <h1>Evelyn e Hugo</h1>
+        <p class="message">Cada segundo ao seu lado é um tesouro que guardo na alma.</p>
+        
+        <div class="photo-container" id="photo-container">
+            <!-- Aqui está a tag img vazia para você adicionar sua imagem -->
+            <img src="nos.jpg" alt="Nossa foto juntos" class="photo">
+        </div>
+        
+        <p class="start-date">Começamos a namorar em <strong>01 de Janeiro de 2024</strong></p>
+        
+        <div class="total-days" id="total-days">
+            0 dias juntos
+        </div>
+        
+        <div class="time-blocks">
+            <div class="time-block">
+                <div class="time-value" id="months">0</div>
+                <div class="time-label">Meses</div>
+            </div>
+            <div class="time-block">
+                <div class="time-value" id="days">0</div>
+                <div class="time-label">Dias</div>
+            </div>
+            <div class="time-block">
+                <div class="time-value" id="hours">0</div>
+                <div class="time-label">Horas</div>
+            </div>
+        </div>
+        
+        <div class="time-blocks">
+            <div class="time-block">
+                <div class="time-value" id="minutes">0</div>
+                <div class="time-label">Minutos</div>
+            </div>
+            <div class="time-block">
+                <div class="time-value" id="seconds">0</div>
+                <div class="time-label">Segundos</div>
+            </div>
+        </div>
+        
+        <p class="note">E este é apenas o começo da nossa história...</p>
+    </div>
+
+    <script>
+        // Data fixa de início: 1 de janeiro de 2024
+        const START_DATE = new Date('2024-01-01T00:00:00');
+        
+        // Criar corações flutuantes de fundo
+        function createBackgroundHearts() {
+            const heartsContainer = document.getElementById('hearts-bg');
+            
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = '❤';
+                
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const size = Math.random() * 15 + 10;
+                
+                heart.style.left = `${left}%`;
+                heart.style.top = `${top}%`;
+                heart.style.fontSize = `${size}px`;
+                
+                heartsContainer.appendChild(heart);
+            }
+        }
+        
+        // Efeito de corações ao clicar em qualquer parte da tela
+        function addFullScreenHeartEffect() {
+            document.addEventListener('click', function(event) {
+                // Gerar vários corações distribuídos na parte inferior da tela
+                for (let i = 0; i < 20; i++) {
+                    createFullScreenHeart();
+                }
+            });
+        }
+        
+        function createFullScreenHeart() {
+            const body = document.body;
+            const heart = document.createElement('div');
+            heart.classList.add('click-heart');
+            heart.innerHTML = '❤';
+            
+            // Posicionamento na parte inferior da tela com distribuição horizontal aleatória
+            const viewportWidth = window.innerWidth;
+            const left = Math.random() * viewportWidth;
+            const bottom = -20; // Um pouco abaixo da parte visível
+            
+            heart.style.left = `${left}px`;
+            heart.style.bottom = `${bottom}px`;
+            
+            // Variar tamanho e cor
+            const size = Math.random() * 25 + 15; // 15-40px
+            heart.style.fontSize = `${size}px`;
+            
+            // Gerar uma cor aleatória em tons de rosa/vermelho
+            const hue = Math.floor(Math.random() * 30) + 340; // 340-360 (vermelho) ou 0-10 (rosa)
+            const saturation = Math.floor(Math.random() * 30) + 70; // 70%-100%
+            const lightness = Math.floor(Math.random() * 30) + 40; // 40%-70%
+            heart.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            
+            // Variar a velocidade da animação
+            const duration = Math.random() * 3 + 3; // 3-6s
+            heart.style.animationDuration = `${duration}s`;
+            
+            // Adicionar uma leve flutuação horizontal
+            const waveAmplitude = Math.random() * 100 + 50; // 50-150px
+            const waveFrequency = Math.random() * 2 + 1; // 1-3 oscilações
+            
+            // Aplicar animação personalizada com keyframes dinâmicos
+            const keyframes = `
+            @keyframes heart-${Date.now()}-${Math.floor(Math.random() * 1000)} {
+                0% {
+                    transform: translateY(0) translateX(0) scale(0.5);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 0.9;
+                }
+                100% {
+                    transform: translateY(-100vh) translateX(${Math.random() > 0.5 ? waveAmplitude : -waveAmplitude}px) scale(1);
+                    opacity: 0;
+                }
+            }`;
+            
+            // Adicionar os estilos ao documento
+            const styleSheet = document.createElement('style');
+            styleSheet.innerHTML = keyframes;
+            document.head.appendChild(styleSheet);
+            
+            // Adicionar o coração ao body
+            body.appendChild(heart);
+            
+            // Remover o coração após a animação terminar
+            setTimeout(() => {
+                heart.remove();
+                styleSheet.remove();
+            }, duration * 1000);
+        }
+        
+        // Atualizar contador
+        function updateCounter() {
+            const now = new Date();
+            
+            // Calcular a diferença em milissegundos
+            const diff = now - START_DATE;
+            
+            // Calcular unidades de tempo
+            const totalSeconds = Math.floor(diff / 1000);
+            const totalMinutes = Math.floor(totalSeconds / 60);
+            const totalHours = Math.floor(totalMinutes / 60);
+            const totalDays = Math.floor(totalHours / 24);
+            
+            const years = Math.floor(totalDays / 365);
+            const months = Math.floor((totalDays % 365) / 30);
+            const days = Math.floor(totalDays % 30);
+            const hours = Math.floor(totalHours % 24);
+            const minutes = Math.floor(totalMinutes % 60);
+            const seconds = Math.floor(totalSeconds % 60);
+            
+            // Atualizar os elementos no DOM
+            // Nota: removido o ano para economizar espaço na tela do celular
+            document.getElementById('months').textContent = months + (years * 12);
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+            document.getElementById('total-days').textContent = 
+                totalDays === 1 ? '1 dia juntos' : `${totalDays} dias juntos`;
+        }
+        
+        // Inicializar
+        window.addEventListener('DOMContentLoaded', () => {
+            createBackgroundHearts();
+            addFullScreenHeartEffect();
+            updateCounter();
+            
+            // Atualizar o contador a cada segundo
+            setInterval(updateCounter, 1000);
+        });
+    </script>
+</body>
+</html>
