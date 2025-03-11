@@ -18,10 +18,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 20px;
             width: 100%;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         
         .container {
@@ -33,11 +33,13 @@
             width: 100%;
             text-align: center;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             height: auto;
+            /* Removida a restrição max-height para permitir fluidez */
             display: flex;
             flex-direction: column;
-            z-index: 1; /* Reduzido para que os corações fiquem na frente */
+            z-index: 1;
+            margin: 20px 0;
         }
         
         .hearts-bg {
@@ -47,7 +49,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 3; /* Aumentado para ficar na frente de tudo */
+            z-index: 3;
         }
         
         .heart {
@@ -82,8 +84,9 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(255, 117, 140, 0.3);
-            height: 260px; /* Ajustado para tela de celular */
-            cursor: pointer; /* Indicar que é clicável */
+            /* Altura responsiva baseada na largura */
+            aspect-ratio: 4/3; 
+            cursor: pointer;
         }
         
         .photo {
@@ -91,11 +94,10 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            object-position: center 30%; /* Ajustado para baixar a imagem - o valor padrão é 50% */
+            object-position: center 30%;
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
         }
         
-        /* Estilos para a animação de troca de foto */
         .photo.fade-out {
             opacity: 0;
             transform: scale(1.1);
@@ -175,7 +177,7 @@
             font-size: 20px;
             color: #ff4081;
             pointer-events: none;
-            z-index: 5; /* Aumentado para ficar acima de tudo */
+            z-index: 5;
             animation: float-up 4s forwards;
             opacity: 0;
         }
@@ -191,6 +193,63 @@
             100% {
                 transform: translateY(-100vh) scale(1);
                 opacity: 0;
+            }
+        }
+        
+        /* Media queries para melhorar a responsividade */
+        @media (max-height: 700px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .photo-container {
+                margin: 10px auto;
+                aspect-ratio: 16/9; /* Mais largo e menos alto em telas menores */
+            }
+            
+            .time-blocks {
+                margin-bottom: 10px;
+                gap: 5px;
+            }
+            
+            .time-block {
+                padding: 8px 5px;
+            }
+            
+            .time-value {
+                font-size: 18px;
+            }
+            
+            .time-label {
+                font-size: 10px;
+            }
+            
+            h1 {
+                margin-bottom: 10px;
+                font-size: 22px;
+            }
+            
+            .message, .start-date, .note {
+                margin-bottom: 10px;
+                font-size: 14px;
+            }
+            
+            .total-days {
+                padding: 8px 15px;
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+        }
+        
+        @media (max-height: 500px) {
+            body {
+                align-items: flex-start;
+                padding: 10px;
+                overflow-y: auto;
+            }
+            
+            .container {
+                margin: 10px 0;
             }
         }
     </style>
@@ -383,6 +442,22 @@
             }, duration * 1000);
         }
         
+        // Verificar se o conteúdo está ultrapassando os limites da tela
+        function checkContentOverflow() {
+            const container = document.querySelector('.container');
+            const windowHeight = window.innerHeight;
+            const containerHeight = container.offsetHeight;
+            
+            // Se o container for maior que a altura da janela
+            if (containerHeight > windowHeight - 40) { // 40px para margens
+                document.body.style.alignItems = 'flex-start';
+                document.body.style.overflowY = 'auto';
+            } else {
+                document.body.style.alignItems = 'center';
+                document.body.style.overflowY = 'hidden';
+            }
+        }
+        
         // Atualizar contador
         function updateCounter() {
             const now = new Date();
@@ -419,12 +494,16 @@
             // Carregar a primeira foto
             loadInitialPhoto();
             
-            // Iniciar a rotação de fotos a cada 5 segundos
+            // Iniciar a rotação de fotos a cada 3 segundos
             setInterval(changePhoto, 5000);
             
             createBackgroundHearts();
             addFullScreenHeartEffect();
             updateCounter();
+            
+            // Verificar o overflow do conteúdo
+            checkContentOverflow();
+            window.addEventListener('resize', checkContentOverflow);
             
             // Atualizar o contador a cada segundo
             setInterval(updateCounter, 1000);
